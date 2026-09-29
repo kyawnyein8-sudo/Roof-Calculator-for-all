@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>အိမ်ခေါင်မိုး ဒိုင်းနှင့် အမိုးပြား တွက်စက်</title>
+    <meta name="theme-color" content="#6c5ce7">
+    <meta name="description" content="အိမ်ခေါင်မိုး ဒိုင်းနှင့် အမိုးပြား တွက်စက် PWA">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .roof-calc-container {
+            font-family: 'Plus Jakarta Sans', 'Padauk', sans-serif;
+            max-width: 650px;
+            margin: 10px auto;
+            background: #ffffff;
+            padding: 25px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.15);
+            color: #2d3436;
+            box-sizing: border-box;
+        }
+
+        .roof-calc-container h2 {
+            text-align: center;
+            color: #5b4bc4;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .roof-calc-settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #f8f9fe;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #e0e6ed;
+            margin-bottom: 20px;
+        }
+
+        .roof-calc-group {
+            margin-bottom: 14px;
+        }
+
+        .roof-calc-container label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+        }
+
+        .roof-calc-container input, 
+        .roof-calc-container select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #dfe6e9;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+            font-family: inherit;
+            background-color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .roof-calc-container input:focus, 
+        .roof-calc-container select:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+        }
+
+        .roof-calc-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .roof-types {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .roof-type-item {
+            cursor: pointer;
+            text-align: center;
+            border: 2px solid #dfe6e9;
+            border-radius: 12px;
+            padding: 10px 4px;
+            background: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .roof-type-item:hover {
+            border-color: #a29bfe;
+        }
+
+        .roof-type-item.selected {
+            border-color: #6c5ce7;
+            background-color: #f3f0ff;
+        }
+
+        .roof-type-item svg {
+            width: 100%;
+            height: 36px;
+        }
+
+        .roof-type-item p {
+            margin: 4px 0 0 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: #2d3436;
+        }
+
+        .btn-calc {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #6c5ce7 0%, #8c7ae6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 6px 18px rgba(108, 92, 231, 0.35);
+            font-family: inherit;
+        }
+
+        .btn-calc:hover {
+            opacity: 0.95;
+        }
+
+        .roof-result {
+            margin-top: 22px;
+            padding: 18px;
+            background-color: #f8f9fe;
+            border-radius: 14px;
+            border: 1px solid #e0e6ed;
+        }
+
+        .roof-result p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #2d3436;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .roof-result p:last-of-type {
+            border-bottom: none;
+        }
+
+        .roof-highlight {
+            font-weight: 700;
+            color: #5b4bc4;
+        }
+
+        .diagram-container {
+            margin-top: 15px;
+            text-align: center;
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #dfe6e9;
+        }
+
+        .diagram-container svg {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+
+        .member-list {
+            margin-top: 15px;
+            background: #fff;
+            padding: 14px;
+            border-radius: 10px;
+            border-left: 4px solid #6c5ce7;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .member-list ul {
+            margin: 8px 0 0 0;
+            padding-left: 18px;
+        }
+
+        .member-list li {
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .error-message {
+            background-color: #ffe5e5;
+            color: #c0392b;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            border: 1px solid #f5c6cb;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        @media (max-width: 550px) {
+            .roof-calc-container {
+                padding: 18px 12px;
+            }
+            .roof-types {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .roof-calc-grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .roof-calc-settings {
+                grid-template-columns: 1fr;
+            }
+            .roof-result p {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="roof-calc-container">
+    <h2>🏠 အိမ်ခေါင်မိုး ဒိုင်းနှင့် အမိုးပြား တွက်စက်</h2>
+    
+    <div class="roof-calc-settings">
+        <div>
+            <label for="unitSelect">🌐 ယူနစ် ရွေးရန် (Unit):</label>
+            <select id="unitSelect" onchange="updateLabels()">
+                <option value="ft" selected>Feet / Inches (ပေ / လက်မ)</option>
+                <option value="m">Meters / mm (မီတာ / မီလီမီတာ)</option>
+            </select>
+        </div>
+        <div>
+            <label for="currencySelect">💰 ငွေကြေး ရွေးရန် (Currency):</label>
+            <select id="currencySelect">
+                <option value="MMK">MMK (ကျပ်)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="THB">THB (฿)</option>
+                <option value="INR">INR (₹)</option>
+            </select>
+        </div>
+    </div>
+
+    <label>ခေါင်မိုး ပုံစံ ရွေးပါ (Roof Type) -</label>
+    <div class="roof-types">
+        <div class="roof-type-item selected" id="type-shed" onclick="selectType('shed')">
+            <svg viewBox="0 0 100 60">
+                <polygon fill="#6c5ce7" opacity="0.25" points="10,45 90,20 90,45"></polygon>
+                <line x1="10" y1="45" x2="90" y2="20" stroke="#6c5ce7" stroke-width="4"></line>
+                <line x1="10" y1="45" x2="90" y2="45" stroke="#2d3436" stroke-width="2"></line>
+                <line x1="90" y1="20" x2="90" y2="45" stroke="#2d3436" stroke-width="2"></line>
+            </svg>
+            <p>၁ ဖက်စောင်း<br>(Shed)</p>
+        </div>
+
+        <div class="roof-type-item" id="type-gable" onclick="selectType('gable')">
+            <svg viewBox="0 0 100 60">
+                <polygon fill="#6c5ce7" opacity="0.25" points="10,45 50,15 90,45"></polygon>
+                <line x1="10" y1="45" x2="50" y2="15" stroke="#6c5ce7" stroke-width="4"></line>
+                <line x1="50" y1="15" x2="90" y2="45" stroke="#6c5ce7" stroke-width="4"></line>
+                <line x1="10" y1="45" x2="90" y2="45" stroke="#2d3436" stroke-width="2"></line>
+            </svg>
+            <p>၂ ဖက်စောင်း<br>(Gable)</p>
+        </div>
+
+        <div class="roof-type-item" id="type-pyramid" onclick="selectType('pyramid')">
+            <svg viewBox="0 0 100 60">
+                <polygon fill="#6c5ce7" opacity="0.2" points="10,45 50,15 90,45"></polygon>
+                <line x1="10" y1="45" x2="50" y2="15" stroke="#6c5ce7" stroke-width="3"></line>
+                <line x1="90" y1="45" x2="50" y2="15" stroke="#6c5ce7" stroke-width="3"></line>
+                <line x1="50" y1="45" x2="50" y2="15" stroke="#6c5ce7" stroke-width="2" stroke-dasharray="3,3"></line>
+                <line x1="10" y1="45" x2="90" y2="45" stroke="#2d3436" stroke-width="2"></line>
+            </svg>
+            <p>၄ ဖက်စောင်း<br>(Pyramid)</p>
+        </div>
+
+        <div class="roof-type-item" id="type-hip" onclick="selectType('hip')">
+            <svg viewBox="0 0 100 60">
+                <polygon fill="#6c5ce7" opacity="0.2" points="10,45 30,20 70,20 90,45"></polygon>
+                <line x1="30" y1="20" x2="70" y2="20" stroke="#6c5ce7" stroke-width="4"></line>
+                <line x1="10" y1="45" x2="30" y2="20" stroke="#6c5ce7" stroke-width="3"></line>
+                <line x1="90" y1="45" x2="70" y2="20" stroke="#6c5ce7" stroke-width="3"></line>
+                <line x1="10" y1="45" x2="90" y2="45" stroke="#2d3436" stroke-width="2"></line>
+            </svg>
+            <p>၄ ဖက်ခေါင်တန်း<br>(Hip)</p>
+        </div>
+    </div>
+
+    <div class="roof-calc-grid-2">
+        <div class="roof-calc-group">
+            <label for="span" id="lblSpan">ခန်းဖွင့် အကျယ် - Span (<span class="unit-name">ပေ</span>) -</label>
+            <input id="span" type="number" step="any" placeholder="15" />
+        </div>
+        <div class="roof-calc-group">
+            <label for="length" id="lblLength">အိမ်အလျား - Length (<span class="unit-name">ပေ</span>) -</label>
+            <input id="length" type="number" step="any" placeholder="30" />
+        </div>
+    </div>
+
+    <div class="roof-calc-grid-2">
+        <div class="roof-calc-group">
+            <label for="pitchRate" id="lblPitch">၁ <span class="unit-name">ပေ</span>လျှင် ခေါင်မြင့်မည့် <span class="sub-unit-name">လက်မ</span> (Pitch) -</label>
+            <input id="pitchRate" type="number" step="any" value="4" />
+        </div>
+        <div class="roof-calc-group">
+            <label for="pitchDegree">သို့မဟုတ် ဒီဂရီ (Pitch Angle °) -</label>
+            <input id="pitchDegree" type="number" step="any" placeholder="18.5" />
+        </div>
+    </div>
+
+    <div class="roof-calc-grid-2">
+        <div class="roof-calc-group">
+            <label for="overhang" id="lblOverhang">အစွန်း ပိုထွက်မည့် အလျား (<span class="unit-name">ပေ</span>) -</label>
+            <input id="overhang" type="number" step="any" value="1.5" />
+        </div>
+        <div class="roof-calc-group">
+            <label for="trussSpacing" id="lblTrussSpacing">ဒိုင်း အကွာအဝေး (<span class="unit-name">ပေ</span>) -</label>
+            <input id="trussSpacing" type="number" step="any" value="8" />
+        </div>
+    </div>
+
+    <div class="roof-calc-grid-2">
+        <div class="roof-calc-group">
+            <label for="purlinSpacing" id="lblPurlinSpacing">မြောင်းတန်း အကွာအဝေး (<span class="unit-name">ပေ</span>) -</label>
+            <input id="purlinSpacing" type="number" step="any" value="2.5" />
+        </div>
+        <div class="roof-calc-group">
+            <label for="sheetWidth" id="lblSheetWidth">အမိုးပြား ၁ ချပ် အကျယ် (<span class="unit-name">ပေ</span>) -</label>
+            <input id="sheetWidth" type="number" step="any" value="2.5" />
+        </div>
+    </div>
+
+    <div class="roof-calc-grid-2">
+        <div class="roof-calc-group">
+            <label for="sheetOverlap">အထပ်/အလေအလွင့် Waste (%) -</label>
+            <input id="sheetOverlap" type="number" step="any" value="5" />
+        </div>
+        <div class="roof-calc-group">
+            <label for="sheetPrice">အမိုးပြား ၁ ချပ် စျေးနှုန်း -</label>
+            <input id="sheetPrice" type="number" step="any" placeholder="25000" />
+        </div>
+    </div>
+
+    <button class="btn-calc" onclick="calculateRoof()">တွက်ချက်မည် (Calculate)</button>
+
+    <div class="error-message" id="errorMessage">⚠️ ကျေးဇူးပြု၍ ခန်းဖွင့်အကျယ် နှင့် အိမ်အလျား တို့ကို မှန်ကန်စွာ ထည့်သွင်းပါ။</div>
+
+    <div class="roof-result" id="resultArea" style="display: none;">
+        <p><span>ခေါင်အမြင့် (Rise):</span> <span class="roof-highlight"><span id="valRoofHeight"></span> <span class="res-unit-text"></span></span></p>
+        <p><span>မိုးစောင်းအလျား (Rafter Length):</span> <span class="roof-highlight" id="valTotalRafter"></span></p>
+        <p><span>စုစုပေါင်း အမိုးဧရိယာ (Roof Area):</span> <span class="roof-highlight"><span id="valRoofArea"></span> <span class="res-area-unit-text"></span></span></p>
+        <p><span>ဒိုင်းခွေ အရေအတွက် (Total Trusses):</span> <span class="roof-highlight"><span id="valTotalTrusses"></span> ခွေ</span></p>
+        <p><span>မြောင်းတန်း အတန်း အရေအတွက် (Purlins):</span> <span class="roof-highlight"><span id="valPurlinCount"></span> တန်း</span></p>
+        <p><span>အမိုးပြား စုစုပေါင်း အရေအတွက် (Sheets):</span> <span class="roof-highlight"><span id="valTotalSheets"></span> ချပ် (Waste <span id="valWastePct"></span>% ပါပြီး)</span></p>
+        <p><span>ခန့်မှန်းခြေ ကုန်ကျစရိတ် (Total Cost):</span> <span class="roof-highlight"><span id="valTotalCost"></span> <span class="res-currency-text"></span></span></p>
+
+        <div class="member-list" id="memberList">
+            <strong>ဒိုင်းခွေမည့် Members စာရင်း (ဒိုင်း ၁ ခွေစာ) -</strong>
+            <ul>
+                <li><strong style="color:#d9534f">Rafter (မိုးစောင်းတန်း):</strong> <span id="memRafter"></span></li>
+                <li><strong style="color:#28a745">Bottom Chord (အောက်တန်း):</strong> <span id="memBottom"></span></li>
+                <li><strong style="color:#6c5ce7">King Post (အလယ်ခေါင်တိုင်):</strong> <span id="memKing"></span></li>
+                <li id="memRidgeRow" style="display:none;"><strong style="color:#17a2b8">Ridge Beam (ခေါင်တန်း):</strong> <span id="memRidge"></span></li>
+                <li><strong style="color:#8c7ae6">Purlin (မြောင်းတန်း):</strong> <span id="memPurlin"></span></li>
+            </ul>
+        </div>
+        <div class="diagram-container" id="diagramContainer"></div>
+    </div>
+</div>
+
+<script>
+    let selectedType = 'shed';
+
+    function selectType(type) {
+        selectedType = type;
+        document.querySelectorAll('.roof-type-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        document.getElementById('type-' + type).classList.add('selected');
+    }
+
+    function updateLabels() {
+        const unit = document.getElementById('unitSelect').value;
+        const uLabel = unit === 'ft' ? 'ပေ' : 'မီတာ';
+        const subLabel = unit === 'ft' ? 'လက်မ' : 'စမ';
+
+        document.querySelectorAll('.unit-name').forEach(el => el.innerText = uLabel);
+        document.querySelectorAll('.sub-unit-name').forEach(el => el.innerText = subLabel);
+    }
+
+    function showError() {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    function calculateRoof() {
+        const unit = document.getElementById('unitSelect').value;
+        const currency = document.getElementById('currencySelect').value;
+        const unitTxt = unit === 'ft' ? 'ပေ' : 'm';
+        const areaUnitTxt = unit === 'ft' ? 'စတုရန်းပေ (Sq.ft)' : 'စတုရန်းမီတာ (Sq.m)';
+
+        const span = parseFloat(document.getElementById('span').value);
+        const length = parseFloat(document.getElementById('length').value);
+        let pitchRate = parseFloat(document.getElementById('pitchRate').value);
+        const pitchDegree = parseFloat(document.getElementById('pitchDegree').value);
+
+        const overhang = parseFloat(document.getElementById('overhang').value) || 0;
+        const trussSpacing = parseFloat(document.getElementById('trussSpacing').value) || (unit === 'ft' ? 8 : 2.4);
+        const purlinSpacing = parseFloat(document.getElementById('purlinSpacing').value) || (unit === 'ft' ? 2.5 : 0.75);
+        const sheetWidth = parseFloat(document.getElementById('sheetWidth').value) || (unit === 'ft' ? 2.5 : 0.75);
+        const sheetOverlap = parseFloat(document.getElementById('sheetOverlap').value) || 0;
+        const sheetPrice = parseFloat(document.getElementById('sheetPrice').value) || 0;
+
+        if (isNaN(span) || span <= 0 || isNaN(length) || length <= 0) {
+            showError();
+            return;
+        }
+
+        if (!isNaN(pitchDegree) && pitchDegree > 0) {
+            pitchRate = Math.tan(pitchDegree * Math.PI / 180) * (unit === 'ft' ? 12 : 100);
+        }
+
+        if (isNaN(pitchRate) || pitchRate < 0) {
+            showError();
+            return;
+        }
+
+        let runLength = span;
+        if (selectedType === 'gable' || selectedType === 'pyramid' || selectedType === 'hip') {
+            runLength = span / 2;
+        }
+
+        const heightVal = unit === 'ft' ? (runLength * pitchRate) / 12 : (runLength * pitchRate) / 100;
+        const baseRafter = Math.sqrt(Math.pow(runLength, 2) + Math.pow(heightVal, 2));
+        const singleRafterLength = baseRafter + overhang;
+        const totalBuildingLength = length + (overhang * 2);
+
+        // Roof area calculation (improved for hip/pyramid)
+        let totalRoofArea;
+        if (selectedType === 'shed') {
+            totalRoofArea = singleRafterLength * totalBuildingLength;
+        } else if (selectedType === 'gable') {
+            totalRoofArea = singleRafterLength * totalBuildingLength * 2;
+        } else if (selectedType === 'pyramid') {
+            // Pyramid: 4 triangular faces
+            const faceArea = 0.5 * span * singleRafterLength;
+            totalRoofArea = faceArea * 4;
+        } else if (selectedType === 'hip') {
+            // Hip: 2 triangular + 2 trapezoidal faces (simplified)
+            const triangleArea = 0.5 * span * singleRafterLength;
+            const trapezoidArea = ((span + length) / 2) * singleRafterLength;
+            totalRoofArea = triangleArea * 2 + trapezoidArea * 2;
+        }
+
+        const totalTrusses = Math.ceil(length / trussSpacing) + 1;
+        let purlinLinesPerSide = Math.ceil(singleRafterLength / purlinSpacing) + 1;
+        let totalPurlinLines = selectedType === 'shed' ? purlinLinesPerSide : purlinLinesPerSide * 2;
+
+        let sheetsAcrossLength = Math.ceil(totalBuildingLength / sheetWidth);
+        let baseSheets = selectedType === 'shed' ? sheetsAcrossLength : sheetsAcrossLength * 2;
+        let totalSheets = Math.ceil(baseSheets * (1 + (sheetOverlap / 100)));
+        let totalCost = totalSheets * sheetPrice;
+
+        document.getElementById('valRoofHeight').innerText = heightVal.toFixed(2);
+        document.querySelectorAll('.res-unit-text').forEach(e => e.innerText = unitTxt);
+        document.querySelectorAll('.res-area-unit-text').forEach(e => e.innerText = areaUnitTxt);
+        document.querySelectorAll('.res-currency-text').forEach(e => e.innerText = currency);
+
+        if (selectedType === 'shed') {
+            document.getElementById('valTotalRafter').innerText = singleRafterLength.toFixed(2) + " " + unitTxt;
+            document.getElementById('memRafter').innerText = singleRafterLength.toFixed(2) + " " + unitTxt + " (1 Pcs)";
+            document.getElementById('memRidgeRow').style.display = "none";
+        } else {
+            document.getElementById('valTotalRafter').innerText = singleRafterLength.toFixed(2) + " " + unitTxt + " (1 Side) / " + (singleRafterLength * 2).toFixed(2) + " " + unitTxt + " (Total)";
+            document.getElementById('memRafter').innerText = singleRafterLength.toFixed(2) + " " + unitTxt + " x 2 Pcs = " + (singleRafterLength * 2).toFixed(2) + " " + unitTxt;
+            document.getElementById('memRidgeRow').style.display = "list-item";
+            document.getElementById('memRidge').innerText = length + " " + unitTxt + " (1 Pcs)";
+        }
+
+        document.getElementById('valRoofArea').innerText = totalRoofArea.toFixed(2);
+        document.getElementById('valTotalTrusses').innerText = totalTrusses;
+        document.getElementById('valPurlinCount').innerText = totalPurlinLines;
+        document.getElementById('valTotalSheets').innerText = totalSheets;
+        document.getElementById('valWastePct').innerText = sheetOverlap;
+        document.getElementById('valTotalCost').innerText = totalCost.toLocaleString();
+
+        document.getElementById('memBottom').innerText = span.toFixed(2) + " " + unitTxt + " (1 Pcs)";
+        document.getElementById('memKing').innerText = heightVal.toFixed(2) + " " + unitTxt + " (1 Pcs)";
+        document.getElementById('memPurlin').innerText = length + " " + unitTxt + " x " + totalPurlinLines + " Lines";
+
+        const rafterTxt = singleRafterLength.toFixed(2) + " " + unitTxt;
+        const heightTxt = heightVal.toFixed(2) + " " + unitTxt;
+        const spanTxt = span.toFixed(2) + " " + unitTxt;
+
+        const diagramDiv = document.getElementById('diagramContainer');
+        diagramDiv.innerHTML = `
+            <svg viewBox="0 0 450 260" style="font-family: inherit;">
+                <polygon points="50,150 200,150 200,230 50,230" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+                <polygon points="200,150 380,110 380,180 200,230" fill="#e9ecef" stroke="#6c757d" stroke-width="2"/>
+                <rect x="100" y="180" width="30" height="50" fill="#d0d7de" stroke="#6c757d"/>
+                <rect x="250" y="150" width="40" height="30" fill="#d0d7de" stroke="#6c757d"/>
+
+                <line x1="50" y1="150" x2="200" y2="150" stroke="#28a745" stroke-width="3"/>
+                <line x1="50" y1="150" x2="125" y2="80" stroke="#d9534f" stroke-width="3"/>
+                <line x1="200" y1="150" x2="125" y2="80" stroke="#d9534f" stroke-width="3"/>
+                <line x1="125" y1="150" x2="125" y2="80" stroke="#6c5ce7" stroke-width="2"/>
+
+                <line x1="125" y1="80" x2="305" y2="40" stroke="#17a2b8" stroke-width="3"/>
+                <line x1="87" y1="115" x2="267" y2="75" stroke="#8c7ae6" stroke-width="2"/>
+                <line x1="162" y1="115" x2="342" y2="75" stroke="#8c7ae6" stroke-width="2"/>
+
+                <text x="315" y="35" fill="#17a2b8" font-weight="bold" font-size="11">Ridge Beam</text>
+                <text x="275" y="70" fill="#8c7ae6" font-weight="bold" font-size="11">Purlin</text>
+                <text x="20" y="110" fill="#d9534f" font-weight="bold" font-size="11">Rafter (${rafterTxt})</text>
+                <text x="130" y="115" fill="#6c5ce7" font-weight="bold" font-size="11">Rise (${heightTxt})</text>
+                <text x="100" y="165" fill="#28a745" font-weight="bold" font-size="11">Span (${spanTxt})</text>
+            </svg>
+        `;
+
+        document.getElementById('resultArea').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+    }
+
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('SW registered:', reg))
+            .catch(err => console.log('SW error:', err));
+    }
+</script>
+
+</body>
+</html>
