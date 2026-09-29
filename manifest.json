@@ -1,0 +1,21 @@
+{
+  "name": "အိမ်ခေါင်မိုး တွက်စက်",
+  "short_name": "Roof Calc",
+  "start_url": "/roof-pwa/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6c5ce7",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
